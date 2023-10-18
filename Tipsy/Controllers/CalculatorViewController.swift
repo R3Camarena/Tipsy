@@ -16,8 +16,8 @@ class CalculatorViewController: UIViewController {
     @IBOutlet weak var twentyPctButton: UIButton!
     @IBOutlet weak var splitNumberLabel: UILabel!
     
-    var tip = 0.10
-    var numberOfPeople = 2
+    var tip = 0.0
+    var people = 2
     var billTotal = 0.0
     var finalResult = "0.0"
     
@@ -30,16 +30,16 @@ class CalculatorViewController: UIViewController {
         twentyPctButton.isSelected = false
         sender.isSelected = true
         
-        let buttonTitle = sender.currentTitle!
-        let buttonTitleMinusPercentSign =  String(buttonTitle.dropLast())
-        let buttonTitleAsANumber = Double(buttonTitleMinusPercentSign)!
-        tip = buttonTitleAsANumber / 100
+        let tipSelected = sender.currentTitle! // 0% - 10% - 20% : String
+        let removePercentage =  tipSelected.dropLast() // 0 - 10 - 20 : String
+        let tipToDouble = Double(removePercentage)! // 0 - 10 - 20 : Double
+        tip = tipToDouble / 100
 
     }
     
     @IBAction func stepperValueChanged(_ sender: UIStepper) {
-        splitNumberLabel.text = String(format: "%.0f", sender.value)
-        numberOfPeople = Int(sender.value)
+        splitNumberLabel.text = String(format: "%.0f", sender.value) // 2 : String
+        people = Int(sender.value)
     }
     
     @IBAction func calculatePressed(_ sender: UIButton) {
@@ -47,7 +47,7 @@ class CalculatorViewController: UIViewController {
         let bill = billTextField.text!
         if bill != "" {
             billTotal = Double(bill)!
-            let result = billTotal * (1 + tip) / Double(numberOfPeople)
+            let result = (((billTotal * tip) + billTotal) / Double(people))
             finalResult = String(format: "%.2f", result)
         }
         
@@ -58,11 +58,11 @@ class CalculatorViewController: UIViewController {
         
         if segue.identifier == "goToResult" {
             
-            let destinationVC = segue.destination as! ResultsViewController
+            let resultVC = segue.destination as! ResultsViewController
             
-            destinationVC.result = finalResult
-            destinationVC.tip = Int(tip * 100)
-            destinationVC.split = numberOfPeople
+            resultVC.result = finalResult
+            resultVC.tip = Int(tip * 100)
+            resultVC.split = people
         }
     }
 }
